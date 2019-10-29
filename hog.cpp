@@ -19,11 +19,13 @@
 #include <ctime>
 #include <dirent.h>
 
-
-#define AMBIL_DATA 1
+//-------------------------
+//-- Select one
+#define AMBIL_DATA 0
 #define EKSTRAK_FITUR 0
-#define TRAINING 0
+#define TRAINING 1
 #define BOOST 0
+//-------------------------
 #define VISUAL false
 
 using namespace cv;
@@ -401,9 +403,9 @@ int main(){
     stringstream dir_posfile;
     dir_posfile << "/mnt/E/alfarobi/data/bola/HOG/positive/";
     stringstream dir_negfile;
-    dir_negfile << "/mnt/E/alfarobi/data/bola/HOG/negative";
+    dir_negfile << "/mnt/E/alfarobi/data/bola/HOG/negative/";
     stringstream dir_hasiltraining;
-    dir_hasiltraining << "/mnt/E/alfarobi/data/bola/HOG/bola_HOG.xml";
+    dir_hasiltraining << "/mnt/E/alfarobi/data/bola/HOG/bola.xml";
 
 #if EKSTRAK_FITUR==1 || AMBIL_DATA==1
     DIR *dir;
@@ -413,11 +415,12 @@ int main(){
 
 #if AMBIL_DATA==1
 
-    int set_kamera = system("v4l2-ctl --device=1 --set-ctrl exposure_auto_priority=0,exposure_auto=1,exposure_absolute=300,gain=200,brightness=128,contrast=150,saturation=200,focus_auto=0,white_balance_temperature_auto=0,white_balance_temperature=5500");
-    set_kamera = system("v4l2-ctl --device=1 --set-ctrl exposure_auto_priority=0,exposure_auto=1,exposure_absolute=300,gain=200,brightness=128,contrast=150,saturation=200,focus_auto=0,white_balance_temperature_auto=0,white_balance_temperature=5500");
-    cout<<"Respon Kamera : "<<set_kamera<<endl;
+    // uncomment misal pakai kamera
+//    int set_kamera = system("v4l2-ctl --device=1 --set-ctrl exposure_auto_priority=0,exposure_auto=1,exposure_absolute=300,gain=200,brightness=128,contrast=150,saturation=200,focus_auto=0,white_balance_temperature_auto=0,white_balance_temperature=5500");
+//    set_kamera = system("v4l2-ctl --device=1 --set-ctrl exposure_auto_priority=0,exposure_auto=1,exposure_absolute=300,gain=200,brightness=128,contrast=150,saturation=200,focus_auto=0,white_balance_temperature_auto=0,white_balance_temperature=5500");
+//    cout<<"Respon Kamera : "<<set_kamera<<endl;
 
-    VideoCapture vc("/media/koseng/563C3F913C3F6ADF/bola/hasil_rekam/video9.avi");
+    VideoCapture vc("/mnt/E/alfarobi/video9.avi");
     //VideoCapture vc("/media/koseng/563C3F913C3F6ADF/backup/hasil_rekam/video2.avi");
     //VideoCapture vc("/media/koseng/563C3F913C3F6ADF/bola/video_/Robots playing soccer at RoboCup 2015 is like watching toddlers learn to kick - Mashable.mp4");
     //VideoCapture vc("/home/koseng/Downloads/MRL-HSL Qualification Video for RoboCup 2018 humanoid KidSize.mp4");
@@ -594,7 +597,7 @@ int main(){
     }else{
         cerr<<"Direktori tidak ditemukan !!"<<endl;
     }    
-    FileStorage hdx_pos("/media/koseng/563C3F913C3F6ADF/bola/positif_baru.xml",FileStorage::WRITE);
+    FileStorage hdx_pos("/mnt/E/alfarobi/data/bola/HOG/positive.xml",FileStorage::WRITE);
     int jml_pos_data = all_posdesc.size();
     int desc_size = all_posdesc[0].size();
     Mat M_pos(jml_pos_data,desc_size,CV_32F);
@@ -660,7 +663,7 @@ int main(){
     }else{
         cerr<<"Direktori tidak ditemukan !!"<<endl;
     }
-    FileStorage hdx_neg("/media/koseng/563C3F913C3F6ADF/bola/negatif_baru.xml",FileStorage::WRITE);
+    FileStorage hdx_neg("/mnt/E/alfarobi/data/bola/HOG/negative.xml",FileStorage::WRITE);
     int jml_neg_data = all_negdesc.size();
     Mat M_neg(jml_neg_data,desc_size,CV_32F);
     cout<<"Simpan...."<<endl;
@@ -673,14 +676,14 @@ int main(){
 
 #if TRAINING == 1
     FileStorage read_pos;
-    read_pos.open("/media/koseng/563C3F913C3F6ADF/bola/positif_baru.xml",FileStorage::READ);
+    read_pos.open("/mnt/E/alfarobi/data/bola/HOG/positive.xml",FileStorage::READ);
     Mat M_pos;
     read_pos["Pos_Descriptor"] >> M_pos;
     int jml_pos_data=M_pos.rows,desc_size=M_pos.cols;
     read_pos.release();
 
     FileStorage read_neg;
-    read_neg.open("/media/koseng/563C3F913C3F6ADF/bola/negatif_baru.xml",FileStorage::READ);
+    read_neg.open("/mnt/E/alfarobi/data/bola/HOG/negative.xml",FileStorage::READ);
     Mat M_neg;
     read_neg["Neg_Descriptor"] >> M_neg;
     int jml_neg_data=M_neg.rows;
